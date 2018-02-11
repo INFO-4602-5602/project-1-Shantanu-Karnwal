@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Project 1</title>
+<link rel="stylesheet" type="text/css" href="project1.css"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+</head>
+
+<body>
+	<div id="partOne">
+        <h1>Part One: </h1>
+	</div>
+
+    <div id="partTwo">
+        <h1>Part Two: </h1>
+        <div id="scatterplot">
+            <p id="scatterLabel"></p>
+        </div>
+	</div>
+
+    <div id="partThree">
+        <h1>Part Three &amp; Four: </h1>
+        <div id="linegraph">
+        </div>
+	</div>
+
+    <div id="partFive">
+        <h1>Part Five: </h1>
+        <div id="scatterplotSet">
+        </div>
+	</div>
+
+    <script type="text/javascript">
+        // Put your part one code here ***********************
+
+        d3.csv("data/anscombe_I.csv", function(error, data1){
+          if (error) throw error;
+          checkDataset(data1);
+        });
+
+        d3.csv("data/anscombe_II.csv", function(error, data2){
+          if (error) throw error;
+          checkDataset(data2);
+        });
+
+        d3.csv("data/anscombe_III.csv", function(error, data3){
+          if (error) throw error;
+          checkDataset(data3);
+        });
+
+        d3.csv("data/anscombe_IV.csv", function(error, data4){
+          if (error) throw error;
+          checkDataset(data4);
+        });
+
+        // Leave this to test your data uploading. All data uploading should be above this line
+        function checkDataset(dataset) {
+            if (dataset.length == 11)
+                $("#partOne").append("<p>data loaded correctly</p>");
+            else
+                $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
+        }
+
+        // Put your part two code here ***********************
+
+
+
+        // Put your part three & four code here ***********************
+
+        // Put your part five code here ***********************
+
+    </script>
+</body>
+
+
+</html>
