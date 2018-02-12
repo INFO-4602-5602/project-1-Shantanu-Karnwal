@@ -15,6 +15,7 @@
 
     <div id="partTwo">
         <h1>Part Two: </h1>
+        <h3>Dataset chosen - Anscombe I</h3>
         <div id="scatterplot">
             <p id="scatterLabel"></p>
         </div>
@@ -22,8 +23,10 @@
 
     <div id="partThree">
         <h1>Part Three &amp; Four: </h1>
+        <h3>Dataset for Part Three - Anscombe I</h3>
         <div id="linegraph">
         </div>
+        <h3>Part Four Shown With Part Two</h3>
 	</div>
 
     <div id="partFive">
@@ -39,6 +42,7 @@
           if (error) throw error;
           checkDataset(data1);
           createScatterPlot(data1);
+          createLineGraph(data1);
         });
 
         d3.csv("data/anscombe_II.csv", function(error, data2){
@@ -128,6 +132,76 @@
 
         // Put your part three & four code here ***********************
         // ************************************************************
+
+        function createLineGraph(dataset){
+
+          var xVal = 'x';
+          var yVal = 'y';
+          var margin = {top: 20, right: 20, bottom:30, left:50};
+          var width = 480 - margin.left - margin.right;
+          var height = 350 - margin.top - margin.bottom;
+
+          var x = d3.scaleLinear().range([0,width]);//map(function(d) { return +d; });
+          var y = d3.scaleLinear().range([height,0]);     //think about cartesian plane -> y axis goes to low to high bottom to top
+
+          var valueline = d3.line()
+                            .x(function(d) {return x(d[xVal]);})
+                            .y(function(d) {return y(d[yVal]);});
+
+          var svg = d3.select("#linegraph").append("svg")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", height + margin.top + margin.bottom)
+                      .append("g")
+                      .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+          x.domain(d3.extent(dataset, function(d) {return +d[xVal];}));
+          y.domain([0, d3.max(dataset, function(d) {return +d[yVal];})]);
+
+          //Thanks to : https://stackoverflow.com/questions/13645446/sort-data-for-d3-js-path
+          dataset.sort(function(a,b) {
+            return d3.ascending(+a[xVal],+b[xVal]);
+          });
+
+          svg.append("path")
+             .data([dataset])
+             .attr("class","line")
+             .attr("d", valueline(dataset))
+             .attr("stroke", "black")
+             .attr("fill", "none");
+
+          // Add the X Axis
+          svg.append("g")
+             .attr("transform", "translate(0, " + height +")")
+             .call(d3.axisBottom(x));
+
+          // Add the Y Axis
+          svg.append("g")
+             .call(d3.axisLeft(y));
+
+          //Add text labels
+          var xLabel = svg.append("text")
+                          .attr("class", "label")
+                          .text(xVal)
+                          .attr("x", width - 20)
+                          .attr("y", height - 10);
+
+          var yLabel = svg.append("text")
+                          .attr("class", "label")
+                          .text(yVal)
+                          .attr("y", -10)
+                          .attr("transform", "rotate(90)")
+                          .style("text-anchor", "start");
+
+          svg.selectAll("circle")
+             .data(dataset)
+             .enter()
+             .append("circle")
+             .attr("r", 5)
+             .attr("cx", function(d){return x(d[xVal]);})
+             .attr("cy", function(d){return y(d[yVal]);})
+             .attr("fill","lightblue");
+
+        }
 
         // ************************************************************
 
