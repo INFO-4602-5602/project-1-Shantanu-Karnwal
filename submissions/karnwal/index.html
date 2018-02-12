@@ -38,6 +38,8 @@
         d3.csv("data/anscombe_I.csv", function(error, data1){
           if (error) throw error;
           checkDataset(data1);
+          createScatterPlot(data1);
+
         });
 
         d3.csv("data/anscombe_II.csv", function(error, data2){
@@ -64,15 +66,79 @@
         }
 
         // Put your part two code here ***********************
+        // ***************************************************
+        function createScatterPlot(dataset){
+          var xVal = 'x';
+          var yVal = 'y';
+          var margin = {top: 20, right: 20, bottom:30, left:50};
+          var width = 480 - margin.left - margin.right;
+          var height = 350 - margin.top - margin.bottom;
 
+          var x = d3.scaleLinear().range([0,width]);//map(function(d) { return +d; });
+          var y = d3.scaleLinear().range([height,0]);     //think about cartesian plane -> y axis goes to low to high bottom to top
 
+          var svg = d3.select("body").append("svg")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", height + margin.top + margin.bottom)
+                      .append("g")
+                      .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+          //Scaling the range of the data
+          /* adding '+'d[xVal] since the xVal values returned will be strings
+             but we want numbers, so appending + sign does that conversion
+             thanks to : https://github.com/d3/d3/issues/2912 */
+          x.domain(d3.extent(dataset, function(d) {return +d[xVal];}));
+          //same thing of '+'d[yVal] as for xVal
+          y.domain([0, d3.max(dataset, function(d) {return +d[yVal];})]);
+
+          // Add the scatterplot points
+          svg.selectAll("circle")
+             .data(dataset)
+             .enter()
+             .append("circle")
+             .attr("r", 5)
+             .attr("cx", function(d){return x(d[xVal]);})
+             .attr("cy", function(d){return y(d[yVal]);})
+             .attr("fill","lightblue");
+
+          // Add the X Axis
+          svg.append("g")
+             .attr("transform", "translate(0, " + height +")")
+             .call(d3.axisBottom(x));
+
+          // Add the Y Axis
+          svg.append("g")
+             .call(d3.axisLeft(y));
+
+          Add text labels
+          var xLabel = svg.append("text")
+                          .attr("class", "label")
+                          .text(xVal)
+                          .attr("x", width - 20)
+                          .attr("y", height - 10);
+
+          var yLabel = svg.append("text")
+                          .attr("class", "label")
+                          .text(yVal)
+                          .attr("y", -10)
+                          .attr("transform", "rotate(90)")
+                          .style("text-anchor", "start");
+        }
+
+        // ***************************************************
 
         // Put your part three & four code here ***********************
+        // ************************************************************
+
+        // ************************************************************
 
         // Put your part five code here ***********************
+
+        // ****************************************************
 
     </script>
 </body>
 
 
 </html>
+
