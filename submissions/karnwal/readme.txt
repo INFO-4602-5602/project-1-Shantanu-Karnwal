@@ -17,3 +17,7 @@ Thanks to : https://github.com/d3/d3/issues/2912
 Part 3: Building Line Graphs
 ------------------------------
 Most of the inspiration for this part is taken from the link - https://bl.ocks.org/d3noob/6f082f0e3b820b6bf68b78f2f7786084, but I have kept the code as much similar to the lecture as possible. Doing this was making the line graph but it was connecting most of the points, instead of connecting just the points in increasing order of x's. To get rid of this problem, I got help from this link - https://stackoverflow.com/questions/13645446/sort-data-for-d3-js-path, which essentially told that I have to sort the points in the order of x's and then plot the line graph.
+
+Part 4: Interaction
+---------------------
+Pretty straightforward. Got some help from: https://stackoverflow.com/questions/23703089/d3-js-change-color-and-size-on-line-graph-dot-on-mouseover
