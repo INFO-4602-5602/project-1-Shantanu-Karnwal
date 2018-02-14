@@ -34,6 +34,18 @@
     <div id="partFive">
         <h1>Part Five: </h1>
         <div id="scatterplotSet">
+          <div id = "scatterplot1">
+            <h3><center>Dataset - Anscombe I</center></h3>
+          </div>
+          <div id = "scatterplot2">
+            <h3><center>Dataset - Anscombe II</center></h3>
+          </div>
+          <div id = "scatterplot3">
+            <h3><center>Dataset - Anscombe III</center></h3>
+          </div>
+          <div id = "scatterplot4">
+            <h3><center>Dataset - Anscombe IV</center></h3>
+          </div>
         </div>
 	</div>
 
@@ -45,21 +57,25 @@
           checkDataset(data1);
           createScatterPlot(data1);
           createLineGraph(data1);
+          createSideScatterPlot(data1,"#scatterplot1");
         });
 
         d3.csv("data/anscombe_II.csv", function(error, data2){
           if (error) throw error;
           checkDataset(data2);
+          createSideScatterPlot(data2,"#scatterplot2");
         });
 
         d3.csv("data/anscombe_III.csv", function(error, data3){
           if (error) throw error;
           checkDataset(data3);
+          createSideScatterPlot(data3,"#scatterplot3");
         });
 
         d3.csv("data/anscombe_IV.csv", function(error, data4){
           if (error) throw error;
           checkDataset(data4);
+          createSideScatterPlot(data4,"#scatterplot4");
         });
 
         // Leave this to test your data uploading. All data uploading should be above this line
@@ -69,6 +85,8 @@
             else
                 $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
         }
+
+        //createSideScatterPlot(data1, data2, data3, data4);
 
         // Put your part two code here ***********************
         // ***************************************************
@@ -179,7 +197,7 @@
              .data([dataset])
              .attr("class","line")
              .attr("d", valueline(dataset))
-             .attr("stroke", "black")
+             .attr("stroke", "orange")
              .attr("fill", "none");
 
           // Add the X Axis
@@ -205,21 +223,6 @@
                           .attr("transform", "rotate(90)")
                           .style("text-anchor", "start");
 
-          svg.selectAll("circle")
-             .data(dataset)
-             .enter()
-             .append("circle")
-             .attr("r", 5)
-             .attr("cx", function(d){return x(d[xVal]);})
-             .attr("cy", function(d){return y(d[yVal]);})
-             .attr("fill","lightblue")
-             .on("mouseover", function(d) {
-                d3.select(this).attr("r", 5).style("fill", "orange");
-              })
-             .on("mouseout", function(d) {
-                d3.select(this).attr("r", 5).style("fill", "lightblue");
-              });
-
         }
 
         // ************************************************************
@@ -227,6 +230,73 @@
         // Put your part five code here ***********************
 
         // ****************************************************
+
+        function createSideScatterPlot(dataset,plot_position){
+        var xVal = 'x';
+        var yVal = 'y';
+        var margin = {top: 20, right: 20, bottom:30, left:50};
+        var width = 280 - margin.left - margin.right;
+        var height = 280 - margin.top - margin.bottom;
+
+        var x = d3.scaleLinear().range([0,width]);//map(function(d) { return +d; });
+        var y = d3.scaleLinear().range([height,0]);     //think about cartesian plane -> y axis goes to low to high bottom to top
+
+        var svg = d3.select(plot_position).append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+
+        //Scaling the range of the data
+        /* adding '+'d[xVal] since the xVal values returned will be strings
+           but we want numbers, so appending + sign does that conversion
+           thanks to : https://github.com/d3/d3/issues/2912 */
+        x.domain(d3.extent(dataset, function(d) {return +d[xVal];}));
+        //same thing of '+'d[yVal] as for xVal
+        y.domain([0, d3.max(dataset, function(d) {return +d[yVal];})]);
+
+        // Add the scatterplot points
+        // Edit - Now it also has the part 4 - Interaction
+        svg.selectAll("circle")
+           .data(dataset)
+           .enter()
+           .append("circle")
+           .attr("r", 5)
+           .attr("cx", function(d){return x(d[xVal]);})
+           .attr("cy", function(d){return y(d[yVal]);})
+           .attr("fill","lightblue")
+           .on("mouseover", function(d) {
+              d3.select(this).attr("r", 5).style("fill", "orange");
+            })
+           .on("mouseout", function(d) {
+              d3.select(this).attr("r", 5).style("fill", "lightblue");
+            });
+
+        // Add the X Axis
+        svg.append("g")
+           .attr("transform", "translate(0, " + height +")")
+           .call(d3.axisBottom(x));
+
+        // Add the Y Axis
+        svg.append("g")
+           .call(d3.axisLeft(y));
+
+           //Add text labels
+           var xLabel = svg.append("text")
+                           .attr("class", "label")
+                           .text(xVal)
+                           .attr("x", width - 20)
+                           .attr("y", height - 10);
+
+           var yLabel = svg.append("text")
+                           .attr("class", "label")
+                           .text(yVal)
+                           .attr("y", -10)
+                           .attr("transform", "rotate(90)")
+                           .style("text-anchor", "start");
+
+        }
+
 
     </script>
 </body>

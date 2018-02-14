@@ -21,3 +21,7 @@ Most of the inspiration for this part is taken from the link - https://bl.ocks.o
 Part 4: Interaction
 ---------------------
 Pretty straightforward. Got some help from: https://stackoverflow.com/questions/23703089/d3-js-change-color-and-size-on-line-graph-dot-on-mouseover
+
+Part 5: Building Multiple Charts
+----------------------------------
+Had to add on code in the css file to incorporate 4 visualizations in the same row. Also added code in html file to show which visualization is for which dataset. Got some help from - https://stackoverflow.com/questions/20694672/4-divs-side-by-side-menu-bar
