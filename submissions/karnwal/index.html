@@ -27,6 +27,8 @@
         <h1>Part Three </h1>
         <h3>Dataset for Part Three - Anscombe I</h3>
         <div id="linegraph">
+          <p id="lineLabel"></p>
+          <br />
         </div>
 
 	</div>
@@ -193,6 +195,10 @@
             return d3.ascending(+a[xVal],+b[xVal]);
           });
 
+          //Converting to numerical data from string
+          var x_dash = dataset.map(function (d) { return parseFloat(d[xVal]); });
+          var y_dash = dataset.map(function (d) { return parseFloat(d[yVal]); });
+
           svg.append("path")
              .data([dataset])
              .attr("class","line")
@@ -208,6 +214,33 @@
           // Add the Y Axis
           svg.append("g")
              .call(d3.axisLeft(y));
+
+          //Edit here for Bell tooltips
+          //Code is inspired from https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
+
+          var div = d3.select("#linegraph").append("div")
+                      .attr("class", "tooltip")
+                      .style("opacity", 0);
+
+          svg.selectAll("circle")
+             .data(dataset)
+             .enter()
+             .append("circle")
+             .attr("r", 5)
+             .attr("cx", function(d){return x(d[xVal]);})
+             .attr("cy", function(d){return y(d[yVal]);})
+             .attr("fill","lightblue")
+             .on("mouseout", function(d) {
+                  d3.select(this).attr("r", 5).style("fill", "lightblue");
+              })
+              //adding tooltip
+              //help from here https://stackoverflow.com/questions/10805184/show-data-on-mouseover-of-circle
+              .on("mouseover", function(d) {
+                  d3.select(this).attr("r", 5).style("fill", "orange");
+                  d3.select("#lineLabel")
+                    .text("x = " +  d.x + ";  y = " + d.y);
+              });
+
 
           //Add text labels
           var xLabel = svg.append("text")
@@ -238,6 +271,10 @@
         var width = 280 - margin.left - margin.right;
         var height = 280 - margin.top - margin.bottom;
 
+        //Making Changes here for Bell : Best fit lines
+        //Code is inspired from the linear regression code in scatterplot in this link
+        //https://bl.ocks.org/ctufts/674ece47de093f6e0cd5af22d7ee9b9b
+
         var x = d3.scaleLinear().range([0,width]);//map(function(d) { return +d; });
         var y = d3.scaleLinear().range([height,0]);     //think about cartesian plane -> y axis goes to low to high bottom to top
 
@@ -254,6 +291,53 @@
         x.domain(d3.extent(dataset, function(d) {return +d[xVal];}));
         //same thing of '+'d[yVal] as for xVal
         y.domain([0, d3.max(dataset, function(d) {return +d[yVal];})]);
+
+        //Making Changes here for Bell : Best fit lines
+        //Code is inspired from the linear regression code in scatterplot in this link
+        //https://bl.ocks.org/ctufts/674ece47de093f6e0cd5af22d7ee9b9b
+
+        var term1 = 0;
+        var term2 = 0;
+
+        var x_mean = d3.mean(dataset, function(d) {return +d[xVal];});
+        var y_mean = d3.mean(dataset, function(d) {return +d[yVal];});
+
+        //Converting to numerical data from string
+        var x_dash = dataset.map(function (d) { return parseFloat(d[xVal]); });
+        var y_dash = dataset.map(function (d) { return parseFloat(d[yVal]); });
+
+        //Now calculating coefficients
+        var xr = 0;
+        var yr = 0;
+        for (i = 0; i < 11; i++) {
+            xr = x_dash[i] - x_mean;
+            yr = y_dash[i] - y_mean;
+            term1 += xr * yr;
+            term2 += xr * xr;
+        }
+
+        //b1 is slope of the line and b0 is the intercept
+        var b1 = term1 / term2;
+        var b0 = y_mean - (b1 * x_mean);
+
+        yhat = [];
+        // fit line using coeffs
+        for (i = 0; i < 11; i++) {
+            yhat.push(b0 + (x_dash[i] * b1));
+        }
+
+        var newdata = [];
+        for (i = 0; i < 11; i++) {
+            newdata.push({
+                "yhat": yhat[i],
+                "y": y_dash[i],
+                "x": x_dash[i]
+            });
+        }
+
+        var valueline = d3.line()
+                          .x(function(d) {return x(d.x);})
+                          .y(function(d) {return y(d.yhat);});
 
         // Add the scatterplot points
         // Edit - Now it also has the part 4 - Interaction
@@ -281,21 +365,36 @@
         svg.append("g")
            .call(d3.axisLeft(y));
 
-           //Add text labels
-           var xLabel = svg.append("text")
-                           .attr("class", "label")
-                           .text(xVal)
-                           .attr("x", width - 20)
-                           .attr("y", height - 10);
+        dataset.sort(function(a,b) {
+             return d3.ascending(+a[xVal],+b[xVal]);
+        });
 
-           var yLabel = svg.append("text")
-                           .attr("class", "label")
-                           .text(yVal)
-                           .attr("y", -10)
-                           .attr("transform", "rotate(90)")
-                           .style("text-anchor", "start");
+        svg.append("path")
+           .data(newdata)
+           .attr("class","line")
+           .attr("d", valueline(newdata))
+           .attr("stroke", "darkred")
+           .attr("fill", "none");
+
+        //Add text labels
+        var xLabel = svg.append("text")
+                        .attr("class", "label")
+                        .text(xVal)
+                        .attr("x", width - 20)
+                        .attr("y", height - 10);
+
+        var yLabel = svg.append("text")
+                        .attr("class", "label")
+                        .text(yVal)
+                        .attr("y", -10)
+                        .attr("transform", "rotate(90)")
+                        .style("text-anchor", "start");
 
         }
+
+
+
+
 
 
     </script>

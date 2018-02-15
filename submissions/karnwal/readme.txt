@@ -25,3 +25,15 @@ Pretty straightforward. Got some help from: https://stackoverflow.com/questions/
 Part 5: Building Multiple Charts
 ----------------------------------
 Had to add on code in the css file to incorporate 4 visualizations in the same row. Also added code in html file to show which visualization is for which dataset. Got some help from - https://stackoverflow.com/questions/20694672/4-divs-side-by-side-menu-bar
+
+Bell: Tooltips
+---------------
+Had to modify some part of part 3 code. Just replaced the 'click' function in part 4 with the 'mouseover' function. Pretty straightforward. Help from - https://stackoverflow.com/questions/10805184/show-data-on-mouseover-of-circle
+
+Bell: Best Fit Lines
+----------------------
+Perfomed Linear Regression on the dataset. Calculated the predicted value y^ (or yhat) by first calculating the least squares estimates of b0 and b1 which are the intercept and the slope respectively. Then used the formula y^ = b0 + b1.x to get the best fit line. Links which I used for help - 
+1) https://bl.ocks.org/ctufts/674ece47de093f6e0cd5af22d7ee9b9b
+2) https://onlinecourses.science.psu.edu/stat501/node/252
+
+
